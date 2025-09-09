@@ -1,9 +1,8 @@
 export function balancearPorAtributos(jugadores) {
+  if (jugadores.length < 2) return { equipoA: [...jugadores], equipoB: [] };
+
   const equipoA = [];
   const equipoB = [];
-
-  // Copia de jugadores para manipular
-  const jugadoresRestantes = [...jugadores];
 
   // Función para calcular promedio de atributos de un equipo
   const promedioEquipo = (equipo) => {
@@ -25,37 +24,35 @@ export function balancearPorAtributos(jugadores) {
     };
   };
 
-  // Función para calcular "desbalance" si agregamos un jugador a un equipo
-  const calcularDesbalance = (equipo, jugador) => {
-    const prom = promedioEquipo(equipo.length ? [...equipo, jugador] : [jugador]);
-    // Usamos la suma de promedios como métrica
-    return prom.defensa + prom.velocidad + prom.habilidad + prom.pase + prom.pegada;
-  };
+  // Puntaje global de un jugador (suma de atributos)
+  const puntajeJugador = (j) => j.velocidad + j.defensa + j.habilidad + j.pase + j.pegada;
 
-  // Repartimos los jugadores uno por uno
-  while (jugadoresRestantes.length > 0) {
-    const jugador = jugadoresRestantes.shift();
+  // Ordenamos jugadores de mayor a menor puntaje
+  const jugadoresOrdenados = [...jugadores].sort((a,b) => puntajeJugador(b) - puntajeJugador(a));
 
-    // 🔹 1. Si un equipo ya tiene más jugadores, el jugador va al otro
-    if (equipoA.length > equipoB.length) {
+  // Asignamos jugadores uno a uno al equipo con menor promedio por atributo
+  jugadoresOrdenados.forEach((jugador) => {
+    const promA = promedioEquipo(equipoA);
+    const promB = promedioEquipo(equipoB);
+
+    // Calculamos desbalance total por diferencia de atributos
+    const desbalanceA = Math.abs(promA.velocidad + promA.defensa + promA.habilidad + promA.pase + promA.pegada);
+    const desbalanceB = Math.abs(promB.velocidad + promB.defensa + promB.habilidad + promB.pase + promB.pegada);
+
+    // Limitamos cantidad de jugadores por equipo para que queden iguales
+    if (equipoA.length < equipoB.length) {
+      equipoA.push(jugador);
+    } else if (equipoB.length < equipoA.length) {
       equipoB.push(jugador);
-      continue;
-    }
-    if (equipoB.length > equipoA.length) {
-      equipoA.push(jugador);
-      continue;
-    }
-
-    // 🔹 2. Si tienen igual cantidad, decidimos por desbalance
-    const desbalanceA = calcularDesbalance(equipoA, jugador);
-    const desbalanceB = calcularDesbalance(equipoB, jugador);
-
-    if (desbalanceA <= desbalanceB) {
-      equipoA.push(jugador);
     } else {
-      equipoB.push(jugador);
+      // Agregamos al equipo que quede más equilibrado
+      if (desbalanceA <= desbalanceB) {
+        equipoA.push(jugador);
+      } else {
+        equipoB.push(jugador);
+      }
     }
-  }
+  });
 
   return { equipoA, equipoB };
 }
