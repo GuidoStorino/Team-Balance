@@ -5,12 +5,14 @@ function JugadorForm({ onAgregar }) {
   const [velocidad, setVelocidad] = useState(5);
   const [defensa, setDefensa] = useState(5);
   const [pase, setPase] = useState(5);
+  const [pegada, setPegada] = useState(5);
+  const [habilidad, setHabilidad] = useState(5);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!nombre.trim()) return;
 
-    const nuevoJugador = { nombre, velocidad, defensa, pase };
+    const nuevoJugador = { nombre, velocidad, defensa, pase, pegada, habilidad };
     onAgregar(nuevoJugador);
 
     // reset
@@ -18,6 +20,8 @@ function JugadorForm({ onAgregar }) {
     setVelocidad(5);
     setDefensa(5);
     setPase(5);
+    setPegada(5);
+    setHabilidad(5)
   };
 
   return (
@@ -43,6 +47,16 @@ function JugadorForm({ onAgregar }) {
       <label>Pase: {pase}</label>
       <input type="range" min="1" max="10" value={pase}
         onChange={(e) => setPase(Number(e.target.value))}
+      />
+
+        <label>Habilidad: {habilidad}</label>
+      <input type="range" min="1" max="10" value={habilidad}
+        onChange={(e) => setHabilidad(Number(e.target.value))}
+      />
+
+        <label>Pegada: {pegada}</label>
+      <input type="range" min="1" max="10" value={pegada}
+        onChange={(e) => setPegada(Number(e.target.value))}
       />
 
       <button type="submit" style={styles.button}>Agregar jugador</button>

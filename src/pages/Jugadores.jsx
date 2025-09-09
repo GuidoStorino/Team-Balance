@@ -15,7 +15,7 @@ function Jugadores({ jugadores, setJugadores, irAEquipos }) {
       <ul>
         {jugadores.map((j, i) => (
           <li key={i}>
-            {j.nombre} (Vel: {j.velocidad}, Def: {j.defensa}, Pase: {j.pase})
+            {j.nombre} (Vel: {j.velocidad}, Def: {j.defensa}, Pase: {j.pase}, Hab: {j.habilidad}, Peg: {j.pegada})
           </li>
         ))}
       </ul>
