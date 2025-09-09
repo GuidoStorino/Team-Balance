@@ -28,7 +28,7 @@ export function balancearPorAtributos(jugadores) {
   // Función para calcular "desbalance" si agregamos un jugador a un equipo
   const calcularDesbalance = (equipo, jugador) => {
     const prom = promedioEquipo(equipo.length ? [...equipo, jugador] : [jugador]);
-    // Suma de diferencias de atributos
+    // Usamos la suma de promedios como métrica
     return prom.defensa + prom.velocidad + prom.habilidad + prom.pase + prom.pegada;
   };
 
@@ -36,11 +36,20 @@ export function balancearPorAtributos(jugadores) {
   while (jugadoresRestantes.length > 0) {
     const jugador = jugadoresRestantes.shift();
 
-    // Calculamos "desbalance" hipotético de cada equipo si le agregamos este jugador
+    // 🔹 1. Si un equipo ya tiene más jugadores, el jugador va al otro
+    if (equipoA.length > equipoB.length) {
+      equipoB.push(jugador);
+      continue;
+    }
+    if (equipoB.length > equipoA.length) {
+      equipoA.push(jugador);
+      continue;
+    }
+
+    // 🔹 2. Si tienen igual cantidad, decidimos por desbalance
     const desbalanceA = calcularDesbalance(equipoA, jugador);
     const desbalanceB = calcularDesbalance(equipoB, jugador);
 
-    // Ponemos el jugador en el equipo que quede más equilibrado
     if (desbalanceA <= desbalanceB) {
       equipoA.push(jugador);
     } else {

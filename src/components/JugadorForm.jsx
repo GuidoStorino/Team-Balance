@@ -49,7 +49,7 @@ function JugadorForm({ onAgregar }) {
         onChange={(e) => setPase(Number(e.target.value))}
       />
 
-        <label>Habilidad: {habilidad}</label>
+        <label>Gambeta: {habilidad}</label>
       <input type="range" min="1" max="10" value={habilidad}
         onChange={(e) => setHabilidad(Number(e.target.value))}
       />
