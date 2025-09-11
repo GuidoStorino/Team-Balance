@@ -2,61 +2,49 @@ import React, { useState } from "react";
 import JugadorForm from "../components/JugadorForm";
 import { useJugadores } from "../hooks/useJugadores";
 
-function Jugadores({ irAEquipos }) {
-  const { jugadores, agregar, eliminar } = useJugadores();
-  const [seleccionados, setSeleccionados] = useState([]);
+function Jugadores({ jugadores, setJugadores, irAEquipos, irAListaJugadores }) {
+  const [jugadorNuevo, setJugadorNuevo] = useState(null); // opcional para mostrar info temporal
 
-  const toggleSeleccion = (nombre) => {
-    setSeleccionados((prev) =>
-      prev.includes(nombre)
-        ? prev.filter((n) => n !== nombre)
-        : [...prev, nombre]
-    );
+  // Función para agregar jugador al partido y opcionalmente guardarlo
+  const agregarJugadorAlPartido = (jugador) => {
+    setJugadores(prev => [...prev, jugador]); // agrega al partido
+    setJugadorNuevo(jugador); // opcional para mostrar en pantalla
   };
 
-  const confirmarSeleccion = () => {
-    if (seleccionados.length < 2) {
-      alert("Debes seleccionar al menos 2 jugadores.");
-      return;
-    }
-    const jugadoresSeleccionados = jugadores.filter((j) =>
-      seleccionados.includes(j.nombre)
-    );
-    irAEquipos(jugadoresSeleccionados);
-  };
+  // Guardar jugador en la lista de guardados
+const { jugadoresGuardados, agregar } = useJugadores();
+
+const guardarJugador = async (jugador) => {
+  await agregar(jugador);
+};
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Gestionar jugadores</h1>
+    <div style={{ padding: 20 }}>
+      <h1>Crear partido</h1>
 
       <h2>Agregar nuevo jugador</h2>
-      <JugadorForm onAgregar={agregar} />
+      <JugadorForm
+        onAgregar={agregarJugadorAlPartido} // agrega al partido
+        onGuardar={guardarJugador}          // guarda para futuras partidas
+      />
+      
 
-      <h2>Jugadores guardados</h2>
+      <button onClick={irAListaJugadores} style={{ marginTop: 20 }}>
+        Seleccionar jugadores guardados
+      </button>
+
+      <h2>Jugadores en el partido</h2>
       <ul>
         {jugadores.map((j, i) => (
           <li key={i}>
-            <label>
-              <input
-                type="checkbox"
-                checked={seleccionados.includes(j.nombre)}
-                onChange={() => toggleSeleccion(j.nombre)}
-              />
-              {j.nombre} (Vel: {j.velocidad}, Def: {j.defensa}, Pase: {j.pase})
-            </label>
-            <button
-              onClick={() => eliminar(j.nombre)}
-              style={{ marginLeft: "10px" }}
-            >
-              Eliminar
-            </button>
+            {j.nombre} (Vel: {j.velocidad}, Def: {j.defensa}, Pase: {j.pase}, Gam: {j.habilidad}, Peg: {j.pegada})
           </li>
         ))}
       </ul>
 
       {jugadores.length >= 2 && (
-        <button onClick={confirmarSeleccion} style={{ marginTop: "20px" }}>
-          Armar equipos con seleccionados
+        <button onClick={() => irAEquipos(jugadores)} style={{ marginTop: 20 }}>
+          Armar equipos
         </button>
       )}
     </div>

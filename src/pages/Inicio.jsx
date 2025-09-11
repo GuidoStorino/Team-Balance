@@ -1,19 +1,13 @@
 import React from "react";
 
-function Inicio({ irAJugadores }) {
+function Inicio({ irAJugadores, irAListaJugadores }) {
   return (
-    <div style={styles.container}>
+    <div className="section flex-center">
       <h1>⚽ TeamBalancer</h1>
-      <button onClick={irAJugadores} style={styles.button}>
-        Crear partido
-      </button>
+      <button className="primary" onClick={irAJugadores}>Crear partido</button>
+      <button className="secondary" onClick={irAListaJugadores}>Jugadores guardados</button>
     </div>
   );
 }
-
-const styles = {
-  container: { textAlign: "center", marginTop: "100px" },
-  button: { padding: "15px 30px", fontSize: "18px", cursor: "pointer" }
-};
 
 export default Inicio;

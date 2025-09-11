@@ -1,36 +1,37 @@
 import { useState, useEffect } from "react";
 import { Preferences } from "@capacitor/preferences";
 
-function useJugadores() {
-  const [jugadores, setJugadores] = useState([]);
+export function useJugadores() {
+  const [jugadoresGuardados, setJugadoresGuardados] = useState([]);
 
   useEffect(() => {
-    (async () => {
+    const cargar = async () => {
       const { value } = await Preferences.get({ key: "jugadores" });
-      if (value) setJugadores(JSON.parse(value));
-    })();
+      setJugadoresGuardados(value ? JSON.parse(value) : []);
+    };
+    cargar();
   }, []);
 
-  const guardar = async (lista) => {
-    setJugadores(lista);
-    await Preferences.set({
-      key: "jugadores",
-      value: JSON.stringify(lista),
-    });
-  };
-
-  const agregar = async (nuevo) => {
-    const actualizados = [...jugadores, nuevo];
-    await guardar(actualizados);
+  // 🔹 Función para agregar jugador
+  const agregar = async (jugador) => {
+    const nuevos = [...jugadoresGuardados, jugador];
+    setJugadoresGuardados(nuevos);
+    await Preferences.set({ key: "jugadores", value: JSON.stringify(nuevos) });
   };
 
   const eliminar = async (nombre) => {
-    const actualizados = jugadores.filter((j) => j.nombre !== nombre);
-    await guardar(actualizados);
+    const nuevos = jugadoresGuardados.filter(j => j.nombre !== nombre);
+    setJugadoresGuardados(nuevos);
+    await Preferences.set({ key: "jugadores", value: JSON.stringify(nuevos) });
   };
 
-  return { jugadores, agregar, eliminar, guardar };
+  const modificar = async (jugadorModificado) => {
+    const nuevos = jugadoresGuardados.map(j =>
+      j.nombre === jugadorModificado.nombre ? jugadorModificado : j
+    );
+    setJugadoresGuardados(nuevos);
+    await Preferences.set({ key: "jugadores", value: JSON.stringify(nuevos) });
+  };
+
+  return { jugadoresGuardados, agregar, eliminar, modificar };
 }
-
-export { useJugadores };
-

@@ -11,7 +11,7 @@ function Resultados({ equipos, irAInicio }) {
       <ul>
         {equipos.equipoA.map((j, i) => (
           <li key={i}>
-            {j.nombre} (Vel: {j.velocidad}, Def: {j.defensa}, Pase: {j.pase})
+            {j.nombre} (Vel: {j.velocidad}, Def: {j.defensa}, Pase: {j.pase}, Gam: {j.habilidad}, Peg: {j.pegada})
           </li>
         ))}
       </ul>
@@ -20,7 +20,7 @@ function Resultados({ equipos, irAInicio }) {
       <ul>
         {equipos.equipoB.map((j, i) => (
           <li key={i}>
-            {j.nombre} (Vel: {j.velocidad}, Def: {j.defensa}, Pase: {j.pase})
+            {j.nombre} (Vel: {j.velocidad}, Def: {j.defensa}, Pase: {j.pase},  Gam: {j.habilidad}, Peg: {j.pegada})
           </li>
         ))}
       </ul>

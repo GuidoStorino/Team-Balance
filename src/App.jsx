@@ -1,53 +1,56 @@
 import React, { useState } from "react";
 import Inicio from "./pages/Inicio";
 import Jugadores from "./pages/Jugadores";
+import ListaJugadores from "./pages/ListaJugadores";
 import Equipos from "./pages/Equipos";
 import Resultados from "./pages/Resultados";
-import { useJugadores } from "./hooks/useJugadores";
 
 function App() {
   const [pantalla, setPantalla] = useState("inicio");
+  const [jugadores, setJugadores] = useState([]); // jugadores del partido actual
   const [equipos, setEquipos] = useState(null);
 
-  // Hook que maneja jugadores guardados en Preferences
-  const { jugadores, agregarJugador, setJugadores } = useJugadores();
-  const [jugadoresSeleccionados, setJugadoresSeleccionados] = useState([]);
+  // Función para agregar jugadores seleccionados de la lista guardada al partido
+  const agregarAlPartido = (seleccionados) => {
+    setJugadores(prev => [...prev, ...seleccionados]);
+    setPantalla("jugadores"); // vuelve automáticamente a la pantalla de creación de partido
+  };
 
-
-const volverInicio = () => {
-  setJugadoresSeleccionados([]);   // limpia jugadores seleccionados
-  setEquipos(null);                // limpia los equipos generados
-  setPantalla("inicio");           // vuelve a la pantalla inicial
-};
-
+  // Resetear partido
+  const volverInicio = () => {
+    setJugadores([]);
+    setEquipos(null);
+    setPantalla("inicio");
+  };
 
   return (
     <div>
       {pantalla === "inicio" && (
-        <Inicio irAJugadores={() => setPantalla("jugadores")} />
+        <Inicio
+          irAJugadores={() => setPantalla("jugadores")}
+          irAListaJugadores={() => setPantalla("jugadoresGuardados")}
+        />
       )}
 
       {pantalla === "jugadores" && (
-  <Jugadores
-    irAEquipos={(jugadoresSeleccionados) => {
-      setJugadoresSeleccionados(jugadoresSeleccionados);
-      setPantalla("equipos");
-    }}
-  />
-)}
-
-
-      {pantalla === "seleccion" && (
-        <SeleccionJugadores
+        <Jugadores
           jugadores={jugadores}
-          setJugadoresSeleccionados={setJugadoresSeleccionados}
-          irAJugadores={() => setPantalla("jugadores")}
+          setJugadores={setJugadores}
+          irAEquipos={(jugadoresSeleccionados) => setPantalla("equipos")}
+          irAListaJugadores={() => setPantalla("jugadoresGuardados")}
+        />
+      )}
+
+      {pantalla === "jugadoresGuardados" && (
+        <ListaJugadores
+          irAInicio={volverInicio}
+          agregarAlPartido={agregarAlPartido}
         />
       )}
 
       {pantalla === "equipos" && (
         <Equipos
-          jugadores={jugadoresSeleccionados}
+          jugadores={jugadores}
           irAResultados={(equiposGen) => {
             setEquipos(equiposGen);
             setPantalla("resultados");
@@ -56,7 +59,10 @@ const volverInicio = () => {
       )}
 
       {pantalla === "resultados" && (
-        <Resultados equipos={equipos} irAInicio={volverInicio} />
+        <Resultados
+          equipos={equipos}
+          irAInicio={volverInicio}
+        />
       )}
     </div>
   );
