@@ -1,49 +1,120 @@
 import React, { useState } from "react";
+import "./JugadorForm.css";
 
 function JugadorForm({ onAgregar, onGuardar }) {
   const [nombre, setNombre] = useState("");
-  const [velocidad, setVelocidad] = useState(1);
-  const [defensa, setDefensa] = useState(1);
-  const [pase, setPase] = useState(1);
-  const [habilidad, setHabilidad] = useState(1);
-  const [pegada, setPegada] = useState(1);
+  const [velocidad, setVelocidad] = useState(5);
+  const [defensa, setDefensa] = useState(5);
+  const [pase, setPase] = useState(5);
+  const [habilidad, setHabilidad] = useState(5);
+  const [pegada, setPegada] = useState(5);
+  const [mensaje, setMensaje] = useState("");
+
+  const resetForm = () => {
+    setNombre("");
+    setVelocidad(5);
+    setDefensa(5);
+    setPase(5);
+    setHabilidad(5);
+    setPegada(5);
+  };
 
   const handleAgregar = () => {
     if (!nombre) {
-      alert("El jugador debe tener un nombre");
+      setMensaje("⚠️ El jugador debe tener un nombre");
       return;
     }
     const jugador = { nombre, velocidad, defensa, pase, habilidad, pegada };
-    if (typeof onAgregar === "function") {
-      onAgregar(jugador); // agrega al partido
-    }
-    // limpiar formulario
-    setNombre(""); setVelocidad(1); setDefensa(1); setPase(1); setHabilidad(1); setPegada(1);
+    onAgregar?.(jugador);
+    setMensaje(`✅ ${nombre} agregado al partido`);
+    resetForm();
+    setTimeout(() => setMensaje(""), 3000); // borra después de 3s
   };
 
   const handleGuardar = () => {
     if (!nombre) {
-      alert("El jugador debe tener un nombre");
+      setMensaje("⚠️ El jugador debe tener un nombre");
       return;
     }
     const jugador = { nombre, velocidad, defensa, pase, habilidad, pegada };
-    if (typeof onGuardar === "function") {
-      onGuardar(jugador); // guarda en Preferences
-      alert(`${nombre} guardado correctamente`);
-    }
+    onGuardar?.(jugador);
+    setMensaje(`✅ ${nombre} guardado correctamente`);
+    resetForm();
+    setTimeout(() => setMensaje(""), 3000);
   };
 
   return (
-    <div style={{ marginBottom: 20 }}>
-      <input placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
-      <input type="number" min={1} max={10} value={velocidad} onChange={(e) => setVelocidad(Number(e.target.value))} />
-      <input type="number" min={1} max={10} value={defensa} onChange={(e) => setDefensa(Number(e.target.value))} />
-      <input type="number" min={1} max={10} value={pase} onChange={(e) => setPase(Number(e.target.value))} />
-      <input type="number" min={1} max={10} value={habilidad} onChange={(e) => setHabilidad(Number(e.target.value))} />
-      <input type="number" min={1} max={10} value={pegada} onChange={(e) => setPegada(Number(e.target.value))} />
+    <div className="jugador-form">
+      <input
+        className="nombre-input"
+        placeholder="Nombre"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+      />
 
-      <button onClick={handleAgregar}>Agregar al partido</button>
-      <button onClick={handleGuardar} style={{ marginLeft: 10 }}>Guardar jugador</button>
+      <div className="slider-group">
+        <label>Velocidad: {velocidad}</label>
+        <input
+          type="range"
+          min={1}
+          max={10}
+          value={velocidad}
+          onChange={(e) => setVelocidad(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="slider-group">
+        <label>Defensa: {defensa}</label>
+        <input
+          type="range"
+          min={1}
+          max={10}
+          value={defensa}
+          onChange={(e) => setDefensa(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="slider-group">
+        <label>Pase: {pase}</label>
+        <input
+          type="range"
+          min={1}
+          max={10}
+          value={pase}
+          onChange={(e) => setPase(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="slider-group">
+        <label>Habilidad: {habilidad}</label>
+        <input
+          type="range"
+          min={1}
+          max={10}
+          value={habilidad}
+          onChange={(e) => setHabilidad(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="slider-group">
+        <label>Pegada: {pegada}</label>
+        <input
+          type="range"
+          min={1}
+          max={10}
+          value={pegada}
+          onChange={(e) => setPegada(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="button-group">
+        <button onClick={handleAgregar}>Agregar al partido</button>
+        <button onClick={handleGuardar} className="guardar-btn">
+          Guardar jugador
+        </button>
+      </div>
+
+      {mensaje && <div className="mensaje-feedback">{mensaje}</div>}
     </div>
   );
 }

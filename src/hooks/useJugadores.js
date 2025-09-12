@@ -7,12 +7,17 @@ export function useJugadores() {
   useEffect(() => {
     const cargar = async () => {
       const { value } = await Preferences.get({ key: "jugadores" });
-      setJugadoresGuardados(value ? JSON.parse(value) : []);
+      try {
+        const parsed = value ? JSON.parse(value) : [];
+        // 🔹 Forzar a que siempre sea array
+        setJugadoresGuardados(Array.isArray(parsed) ? parsed : []);
+      } catch (e) {
+        setJugadoresGuardados([]); // fallback seguro
+      }
     };
     cargar();
   }, []);
 
-  // 🔹 Función para agregar jugador
   const agregar = async (jugador) => {
     const nuevos = [...jugadoresGuardados, jugador];
     setJugadoresGuardados(nuevos);
@@ -20,13 +25,13 @@ export function useJugadores() {
   };
 
   const eliminar = async (nombre) => {
-    const nuevos = jugadoresGuardados.filter(j => j.nombre !== nombre);
+    const nuevos = jugadoresGuardados.filter((j) => j.nombre !== nombre);
     setJugadoresGuardados(nuevos);
     await Preferences.set({ key: "jugadores", value: JSON.stringify(nuevos) });
   };
 
   const modificar = async (jugadorModificado) => {
-    const nuevos = jugadoresGuardados.map(j =>
+    const nuevos = jugadoresGuardados.map((j) =>
       j.nombre === jugadorModificado.nombre ? jugadorModificado : j
     );
     setJugadoresGuardados(nuevos);

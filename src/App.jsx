@@ -1,26 +1,22 @@
 import React, { useState } from "react";
 import Inicio from "./pages/Inicio";
 import Jugadores from "./pages/Jugadores";
-import ListaJugadores from "./pages/ListaJugadores";
 import Equipos from "./pages/Equipos";
 import Resultados from "./pages/Resultados";
+import ListaJugadores from "./pages/ListaJugadores";
 
 function App() {
   const [pantalla, setPantalla] = useState("inicio");
   const [jugadores, setJugadores] = useState([]); // jugadores del partido actual
   const [equipos, setEquipos] = useState(null);
 
-  // Función para agregar jugadores seleccionados de la lista guardada al partido
-  const agregarAlPartido = (seleccionados) => {
-    setJugadores(prev => [...prev, ...seleccionados]);
-    setPantalla("jugadores"); // vuelve automáticamente a la pantalla de creación de partido
-  };
+  // Función para agregar jugadores al partido
+  const agregarJugadorAlPartido = (nuevosJugadores) => {
+    const jugadoresArray = Array.isArray(nuevosJugadores)
+      ? nuevosJugadores
+      : [nuevosJugadores];
 
-  // Resetear partido
-  const volverInicio = () => {
-    setJugadores([]);
-    setEquipos(null);
-    setPantalla("inicio");
+    setJugadores((prev) => [...prev, ...jugadoresArray]);
   };
 
   return (
@@ -28,7 +24,7 @@ function App() {
       {pantalla === "inicio" && (
         <Inicio
           irAJugadores={() => setPantalla("jugadores")}
-          irAListaJugadores={() => setPantalla("jugadoresGuardados")}
+          irAListaJugadores={() => setPantalla("listaJugadores")}
         />
       )}
 
@@ -36,15 +32,12 @@ function App() {
         <Jugadores
           jugadores={jugadores}
           setJugadores={setJugadores}
-          irAEquipos={(jugadoresSeleccionados) => setPantalla("equipos")}
-          irAListaJugadores={() => setPantalla("jugadoresGuardados")}
-        />
-      )}
-
-      {pantalla === "jugadoresGuardados" && (
-        <ListaJugadores
-          irAInicio={volverInicio}
-          agregarAlPartido={agregarAlPartido}
+          irAEquipos={(jugadoresSeleccionados) => {
+            setJugadores(jugadoresSeleccionados || jugadores);
+            setPantalla("equipos");
+          }}
+          irAListaJugadores={() => setPantalla("listaJugadores")}
+          agregarJugadorAlPartido={agregarJugadorAlPartido}
         />
       )}
 
@@ -61,7 +54,18 @@ function App() {
       {pantalla === "resultados" && (
         <Resultados
           equipos={equipos}
-          irAInicio={volverInicio}
+          irAInicio={() => {
+            setJugadores([]);
+            setEquipos(null);
+            setPantalla("inicio");
+          }}
+        />
+      )}
+
+      {pantalla === "listaJugadores" && (
+        <ListaJugadores
+          irAInicio={() => setPantalla("inicio")}
+          agregarAlPartido={agregarJugadorAlPartido}
         />
       )}
     </div>

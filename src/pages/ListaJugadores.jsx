@@ -6,9 +6,8 @@ function ListaJugadores({ irAInicio, agregarAlPartido }) {
   const { jugadoresGuardados, eliminar, modificar } = useJugadores();
   const [seleccionados, setSeleccionados] = useState([]);
   const [jugadores, setJugadores] = useState([]);
-  const [editJugador, setEditJugador] = useState(null); // jugador que se está editando
+  const [editJugador, setEditJugador] = useState(null);
 
-  // Ordenar alfabéticamente al cargar
   useEffect(() => {
     const ordenados = [...(jugadoresGuardados || [])].sort((a, b) =>
       a.nombre.localeCompare(b.nombre)
@@ -27,22 +26,19 @@ function ListaJugadores({ irAInicio, agregarAlPartido }) {
   const handleAgregarAlPartido = () => {
     const seleccion = jugadores.filter(j => seleccionados.includes(j.nombre));
     if (seleccion.length === 0) return;
-
-    agregarAlPartido(seleccion);  // agrega al partido
+    agregarAlPartido(seleccion);  // ✅ agregar al partido actual
     setSeleccionados([]);          // limpia selección
   };
 
-  const handleModificar = (jugador) => {
-    setEditJugador(jugador); // abre modal
-  };
+  const handleModificar = (jugador) => setEditJugador(jugador);
 
   const handleGuardarEdicion = (jugadorModificado) => {
-    modificar(jugadorModificado); // actualiza en la lista de guardados
-    setEditJugador(null);          // cierra modal
+    modificar(jugadorModificado);
+    setEditJugador(null);
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className="container">
       <h1>Jugadores guardados</h1>
 
       {editJugador && (
@@ -67,17 +63,17 @@ function ListaJugadores({ irAInicio, agregarAlPartido }) {
                 />
                 {j.nombre} (Vel: {j.velocidad}, Def: {j.defensa}, Pase: {j.pase}, Gam: {j.habilidad}, Peg: {j.pegada})
               </label>
-              <button onClick={() => eliminar(j.nombre)} style={{ marginLeft: 10 }}>❌</button>
-              <button onClick={() => handleModificar(j)} style={{ marginLeft: 5 }}>✏️ Modificar</button>
+              <button onClick={() => eliminar(j.nombre)}>❌</button>
+              <button onClick={() => handleModificar(j)}>✏️ </button>
             </li>
           ))}
         </ul>
       )}
 
-      <button onClick={handleAgregarAlPartido} style={{ marginTop: 20 }}>
+      <button onClick={handleAgregarAlPartido} className="btn">
         Agregar seleccionados al partido
       </button>
-      <button onClick={irAInicio} style={{ marginTop: 20, marginLeft: 10 }}>
+      <button onClick={irAInicio} className="btn">
         Volver al inicio
       </button>
     </div>
