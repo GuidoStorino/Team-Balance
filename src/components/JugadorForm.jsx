@@ -86,7 +86,7 @@ function JugadorForm({ onAgregar, onGuardar }) {
       </div>
 
       <div className="slider-group">
-        <label>Habilidad: {habilidad}</label>
+        <label>Gambeta: {habilidad}</label>
         <input
           type="range"
           min={1}
